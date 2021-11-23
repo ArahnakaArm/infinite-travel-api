@@ -19,10 +19,11 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
+import Drawer from "../components/Drawer";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-  });
+});
 
 
 
@@ -36,17 +37,25 @@ export default function ExolerPage() {
     const [totalPage, setTotalPage] = React.useState(0);
     const [openDeleteDialog, setOpenDeleteDialog] = React.useState(false);
     const [open, setOpen] = React.useState(false);
- 
 
+
+    const [width, setWindowWidth] = useState(1000);
+    const updateDimensions = () => {
+        const width = window.innerWidth
+        setWindowWidth(width)
+        console.log(width)
+    }
+
+    window.addEventListener("resize", updateDimensions)
 
     useEffect(() => {
-        fetch(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_URL_PATH_EXPLORE}?offset=0&limit=7`)
+        fetch(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_URL_PATH_EXPLORE}?offset=0&limit=6`)
             .then(res => res.json())
             .then(
                 (result) => {
                     setItems(result.resultData);
-                    if (result.totalCount % 7 ===  0) setTotalPage((result.totalCount / 7));
-                    else setTotalPage(Math.floor(((result.totalCount / 7) + 1)));
+                    if (result.totalCount % 6 === 0) setTotalPage((result.totalCount / 6));
+                    else setTotalPage(Math.floor(((result.totalCount / 6) + 1)));
                     setIsLoaded(true);
                 },
                 (error) => {
@@ -57,30 +66,30 @@ export default function ExolerPage() {
     }, [])
 
 
-    const getAllExplore = (offset,limit,method = "common") => {
+    const getAllExplore = (offset, limit, method = "common") => {
         fetch(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_URL_PATH_EXPLORE}?offset=${offset}&limit=${limit}`)
-        .then(res => res.json())
-        .then(
-            (result) => {
-                setItems(result.resultData);
-                if (result.totalCount % 7 ===  0) setTotalPage((result.totalCount / 7));
-                else setTotalPage(Math.floor(((result.totalCount / 7) + 1)));
-                setIsLoaded(true);
-                if (method === "delete"){
-                    setPage(1);
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    setItems(result.resultData);
+                    if (result.totalCount % 6 === 0) setTotalPage((result.totalCount / 6));
+                    else setTotalPage(Math.floor(((result.totalCount / 6) + 1)));
+                    setIsLoaded(true);
+                    if (method === "delete") {
+                        setPage(1);
+                    }
+                },
+                (error) => {
+                    setIsLoaded(true);
+                    setError(error);
                 }
-            },
-            (error) => {
-                setIsLoaded(true);
-                setError(error);
-            }
-        )
+            )
     };
 
     const handleChangePage = (event, value) => {
         setPage(value);
-        getAllExplore((7*(value-1)),7)
-      
+        getAllExplore((6 * (value - 1)), 6)
+
         console.log(value)
     };
 
@@ -94,7 +103,7 @@ export default function ExolerPage() {
     };
 
 
-    const handleDeleteButton = (id , title) => {
+    const handleDeleteButton = (id, title) => {
         setCurrentTitleDelete(title)
         setCurrentIdDelete(id)
         console.log(id);
@@ -116,17 +125,17 @@ export default function ExolerPage() {
             headers: { 'Content-Type': 'application/json' }
         };
         console.log("CF Delete")
-        fetch(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_URL_PATH_EXPLORE}${currentIdDelete}`,requestOptions)
-        .then(res => res.json())
-        .then(
-            (result) => {
-                getAllExplore(0,7,"delete");
-                openSuccessAlert();
-            },
-            (error) => {
-             
-            }
-        )
+        fetch(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_URL_PATH_EXPLORE}${currentIdDelete}`, requestOptions)
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    getAllExplore(0, 6, "delete");
+                    openSuccessAlert();
+                },
+                (error) => {
+
+                }
+            )
         setOpenDeleteDialog(false);
         setCurrentIdDelete()
     };
@@ -143,30 +152,28 @@ export default function ExolerPage() {
 
     const openSuccessAlert = () => {
         setOpen(true);
-      };
-    
-      const handleCloseSuccessAlert = (event, reason) => {
+    };
+
+    const handleCloseSuccessAlert = (event, reason) => {
         if (reason === 'clickaway') {
-          return;
+            return;
         }
-    
+
         setOpen(false);
-      };
+    };
 
 
 
     if (error) {
-        return <div style={{ marginTop: 70, width: '100%' }}>Error: {error.message}</div>;
-    } else if (!isLoaded) {
-        return <div style={{ marginTop: 70, width: '100%' }}>Loading...</div>;
-    } else {
         return (
-            <div style={{ marginTop: 70, width: '100%' }}>
-          <Snackbar open={open} autoHideDuration={6000} onClose={handleCloseSuccessAlert}>
-        <Alert onClose={handleCloseSuccessAlert} severity="success" sx={{ width: '100%' }}>
-          สำเร็จ !!
-        </Alert>
-      </Snackbar>
+            <div style={
+                { marginLeft:width <= 600 ? 0 : 180, width: '100%' }}>
+                <Drawer />
+                <Snackbar open={open} autoHideDuration={6000} onClose={handleCloseSuccessAlert}>
+                    <Alert onClose={handleCloseSuccessAlert} severity="success" sx={{ width: '100%' }}>
+                        สำเร็จ !!
+                    </Alert>
+                </Snackbar>
                 <Dialog
                     open={openDeleteDialog}
                     onClose={handleCloseDeleteDialog}
@@ -178,7 +185,7 @@ export default function ExolerPage() {
                     </DialogTitle>
                     <DialogContent>
                         <DialogContentText id="alert-dialog-description">
-                            {currentIdDelete} คุณต้องการที่จะลบ {currentTitleDelete} ใช่หรือไม่ ? 
+                            {currentIdDelete} คุณต้องการที่จะลบ {currentTitleDelete} ใช่หรือไม่ ?
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>
@@ -236,7 +243,7 @@ export default function ExolerPage() {
                                                     <Button onClick={() => handleChangeButton(item.exploreId)} color="warning" variant="contained" startIcon={<CreateIcon />}>แก้ไข</Button>
                                                 </Grid>
                                                 <Grid item xs={12} md={4}>
-                                                    <Button onClick={() => handleDeleteButton(item.exploreId,item.header)} color="error" variant="contained" startIcon={<DeleteIcon />}>ลบ</Button>
+                                                    <Button onClick={() => handleDeleteButton(item.exploreId, item.header)} color="error" variant="contained" startIcon={<DeleteIcon />}>ลบ</Button>
                                                 </Grid>
 
                                             </Grid>
@@ -259,6 +266,131 @@ export default function ExolerPage() {
 
 
                 <Grid container mt={5}
+                    direction="row"
+                    justifyContent="center"
+                    alignItems="center">
+                    <Grid item>
+                        <Pagination color="primary" count={totalPage} page={page} onChange={handleChangePage} />
+                    </Grid>
+
+
+                </Grid>
+
+
+
+            </div>
+        ); 
+    } else if (!isLoaded) {
+        return  (<div style={
+            { marginLeft:width <= 600 ? 0 : 180, width: '100%' , marginTop : 200 }}>
+                <Drawer />
+                <div >
+                Loading...
+                </div>
+                </div>
+        )
+    } else {
+        return (
+            <div style={
+                { marginLeft:width <= 600 ? 0 : 180, width: '100%' }}>
+                <Drawer />
+                <Snackbar open={open} autoHideDuration={6000} onClose={handleCloseSuccessAlert}>
+                    <Alert onClose={handleCloseSuccessAlert} severity="success" sx={{ width: '100%' }}>
+                        สำเร็จ !!
+                    </Alert>
+                </Snackbar>
+                <Dialog
+                    open={openDeleteDialog}
+                    onClose={handleCloseDeleteDialog}
+                    aria-labelledby="alert-dialog-title"
+                    aria-describedby="alert-dialog-description"
+                >
+                    <DialogTitle id="alert-dialog-title">
+                        {"ยืนยันการลบ?"}
+                    </DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-description">
+                            {currentIdDelete} คุณต้องการที่จะลบ {currentTitleDelete} ใช่หรือไม่ ?
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleCloseDeleteDialog}>ยกเลิก</Button>
+                        <Button onClick={confirmDeleteHandle} autoFocus>
+                            ลบ
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+
+
+                <Box mr={3} ml={3} mt={3} sx={{ justifyContent: 'center' }}>
+                </Box>
+                <Box mr={3} ml={3} sx={{ justifyContent: 'center' }}>
+                    <TableContainer component={Paper}>
+                        <Table>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell width="10%">ลำดับ</TableCell>
+                                    <TableCell width="25%">ชื่อ Explore</TableCell>
+                                    <TableCell width="15%">ผู้เขียน</TableCell>
+                                    <TableCell width="15%">วัน-เวลา</TableCell>
+                                    <TableCell >Action</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {items.map((item) => (
+                                    <TableRow
+                                        key={item.exploreId}
+                                        sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                    >
+                                        <TableCell component="th" scope="row">
+                                            {item.exploreId}
+                                        </TableCell>
+                                        <TableCell component="th" scope="row">
+                                            {item.header}
+                                        </TableCell>
+
+                                        <TableCell component="th" scope="row">
+                                            {item.author}
+                                        </TableCell>
+
+                                        <TableCell component="th" scope="row">
+                                            {changeDateTimeFormat(item.created_at)}
+                                        </TableCell>
+
+
+                                        <TableCell component="th" scope="row">
+
+                                            <Grid container spacing={2}>
+                                                <Grid item xs={12} md={4}>
+                                                    <Button onClick={() => handleCreateContentButton(item.exploreId)} color="info" variant="contained" startIcon={<AddCircleIcon />}>Content</Button>
+                                                </Grid>
+                                                <Grid item xs={12} md={3}>
+                                                    <Button onClick={() => handleChangeButton(item.exploreId)} color="warning" variant="contained" startIcon={<CreateIcon />}>แก้ไข</Button>
+                                                </Grid>
+                                                <Grid item xs={12} md={4}>
+                                                    <Button onClick={() => handleDeleteButton(item.exploreId, item.header)} color="error" variant="contained" startIcon={<DeleteIcon />}>ลบ</Button>
+                                                </Grid>
+
+                                            </Grid>
+                                            {/*        <Box display="flex" justifyContent="space-between">
+                                                <Button variant="contained" startIcon={<AddCircleIcon />}>เพิ่ม Content</Button>
+                                                <Button variant="contained" startIcon={<CreateIcon />}>แก้ไข</Button>
+                                                <Button variant="contained" startIcon={<DeleteIcon />}>ลบ</Button>
+                                            </Box> */}
+
+
+                                        </TableCell>
+
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+
+                </Box>
+
+
+                <Grid sx={{ mb : 2}} container mt={5}
                     direction="row"
                     justifyContent="center"
                     alignItems="center">
