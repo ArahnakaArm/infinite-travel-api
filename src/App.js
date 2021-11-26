@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import ExplorePage from "./pages/explorePage";
+import ExplorePage from "./pages/explorePage/explorePage";
+import CreateExplorePage from './pages/explorePage/createExplorePage'
 import LoginPage from "./pages/loginPage";
 import HelloComponent from "./components/HelloComponent";
 import { Route, Switch } from "react-router-dom";
@@ -40,9 +41,10 @@ export default function App() {
       <div className={classes.container}>
     
         <Switch>
-          <Route exact from="/" render={props => <HelloComponent {...props} />} />
           <Route exact from="/login" render={props => <LoginPage {...props} />} />
+          <ProtectedRoute exact path="/"  component={HelloComponent}  />
           <ProtectedRoute exact path="/explore" component={ExplorePage} />
+          <ProtectedRoute exact path="/explore/create" component={CreateExplorePage} />
      
         </Switch>
       </div>

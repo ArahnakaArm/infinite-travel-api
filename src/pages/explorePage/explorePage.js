@@ -19,7 +19,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
-import Drawer from "../components/Drawer";
+import Drawer from "../../components/Drawer";
 
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -27,7 +27,7 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 
 
 
-export default function ExolerPage() {
+export default function ExolerPage(props) {
     const [error, setError] = useState(null);
     const [isLoaded, setIsLoaded] = useState(false);
     const [items, setItems] = useState([]);
@@ -37,7 +37,7 @@ export default function ExolerPage() {
     const [totalPage, setTotalPage] = React.useState(0);
     const [openDeleteDialog, setOpenDeleteDialog] = React.useState(false);
     const [open, setOpen] = React.useState(false);
-
+    const { history } = props;
 
     const [width, setWindowWidth] = useState(1000);
     const updateDimensions = () => {
@@ -167,7 +167,7 @@ export default function ExolerPage() {
     if (error) {
         return (
             <div style={
-                { marginLeft:width <= 600 ? 0 : 180, width: '100%' }}>
+                { marginLeft: width <= 600 ? 0 : 180, width: '100%' }}>
                 <Drawer />
                 <Snackbar open={open} autoHideDuration={6000} onClose={handleCloseSuccessAlert}>
                     <Alert onClose={handleCloseSuccessAlert} severity="success" sx={{ width: '100%' }}>
@@ -198,8 +198,11 @@ export default function ExolerPage() {
 
 
                 <Box mr={3} ml={3} mt={3} sx={{ justifyContent: 'center' }}>
+
                 </Box>
+
                 <Box mr={3} ml={3} sx={{ justifyContent: 'center' }}>
+
                     <TableContainer component={Paper}>
                         <Table>
                             <TableHead>
@@ -279,20 +282,20 @@ export default function ExolerPage() {
 
 
             </div>
-        ); 
+        );
     } else if (!isLoaded) {
-        return  (<div style={
-            { marginLeft:width <= 600 ? 0 : 180, width: '100%' , marginTop : 200 }}>
-                <Drawer />
-                <div >
+        return (<div style={
+            { marginLeft: width <= 600 ? 0 : 180, width: '100%', marginTop: 200 }}>
+            <Drawer />
+            <div >
                 Loading...
-                </div>
-                </div>
+            </div>
+        </div>
         )
     } else {
         return (
             <div style={
-                { marginLeft:width <= 600 ? 0 : 180, width: '100%' }}>
+                { marginLeft: width <= 600 ? 0 : 180, width: '100%' }}>
                 <Drawer />
                 <Snackbar open={open} autoHideDuration={6000} onClose={handleCloseSuccessAlert}>
                     <Alert onClose={handleCloseSuccessAlert} severity="success" sx={{ width: '100%' }}>
@@ -322,9 +325,18 @@ export default function ExolerPage() {
                 </Dialog>
 
 
-                <Box mr={3} ml={3} mt={3} sx={{ justifyContent: 'center' }}>
+                <Box mr={3} ml={3}  sx={{ justifyContent: 'center' }}>
+                <Grid container justifyContent="flex-end">
+                    <Grid >
+                        <Button  onClick={() =>{
+                            history.push("/explore/create")
+                        }}  color="info" variant="contained" startIcon={<AddCircleIcon />}>Explore</Button>
+                    </Grid>
+                </Grid>
                 </Box>
-                <Box mr={3} ml={3} sx={{ justifyContent: 'center' }}>
+             
+         
+                <Box mr={3} ml={3} mt={2} sx={{ justifyContent: 'center' }}>
                     <TableContainer component={Paper}>
                         <Table>
                             <TableHead>
@@ -337,13 +349,13 @@ export default function ExolerPage() {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {items.map((item) => (
+                                {items.map((item,i) => (
                                     <TableRow
                                         key={item.exploreId}
                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                     >
                                         <TableCell component="th" scope="row">
-                                            {item.exploreId}
+                                            {i+1}
                                         </TableCell>
                                         <TableCell component="th" scope="row">
                                             {item.header}
@@ -390,7 +402,7 @@ export default function ExolerPage() {
                 </Box>
 
 
-                <Grid sx={{ mb : 2}} container mt={5}
+                <Grid sx={{ mb: 2 }} container mt={5}
                     direction="row"
                     justifyContent="center"
                     alignItems="center">
