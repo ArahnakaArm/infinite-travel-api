@@ -16,26 +16,71 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import CircularProgress from '@mui/material/CircularProgress';
 import { minWidth } from "@mui/system";
+import Divider from '@mui/material/Divider';
+import TextField from '@mui/material/TextField';
+import TextareaAutosize from '@mui/material/TextareaAutosize';
 import uuid from 'react-uuid'
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+import { makeStyles } from "@material-ui/core/styles";
+import FormHelperText from '@mui/material/FormHelperText';
 
-function CreateExplorePage() {
+
+function CreateExplorePage(props) {
+    const { history } = props;
     const [selectedFile, setSelectedFile] = useState(null)
     const [width, setWindowWidth] = useState(1000);
     const [openCropDialog, setOpenCropDialog] = React.useState(false);
     const imagePreviewCanvasRef = React.createRef();
     const [pixelCrop, setPixelCrop] = useState(null);
     const fileInputRef = React.createRef()
-
     const [upImg, setUpImg] = useState();
     const [extFile, setExtFile] = useState();
     const imgRef = useRef(null);
     const previewCanvasRef = useRef(null);
     const [crop, setCrop] = useState({ unit: '%', width: 30, aspect: 16 / 9 });
     const [completedCrop, setCompletedCrop] = useState(null);
+    const [explore, setExplore] = useState({ title: "", paragraph: "", author: "", imageUrl: "" })
+    let tempImgUrl = '';
+    const [isChoosedImg, setIsChoosedImg] = useState(false);
+    const MySwal = withReactContent(Swal)
+
+    const [isInvalidTitle, setIsInvalidTitle] = React.useState(false);
+    const [isInvalidParagraph, setIsInvalidParagraph] = React.useState(false);
+    const [isInvalidAuthor, setIsInvalidAuthor] = React.useState(false);
+    const [isInvalidImg, setIsInvalidImg] = React.useState(false);
+
+    const useStyles = makeStyles({
+        root: {
+            "& .MuiFormHelperText-root": {
+                marginLeft: 0
+            }
+        }
+    });
+
+    const classes = useStyles();
+
+
+    var inputPropsErrorValidTitle = {
+        error: true,
+        helperText: "Please Enter Title"
+    };
+
+
+    var inputPropsErrorValidParagraph = {
+        error: true,
+        helperText: "Please Enter Paragraph",
+        marginLeft: 0
+    };
+
+    var inputPropsErrorValidAuthor = {
+        error: true,
+        helperText: "Please Enter Author"
+    };
+
 
 
     useEffect(() => {
-        console.log("TSTTT")
     }, []);
 
     /* useEffect(() => {
@@ -72,36 +117,6 @@ function CreateExplorePage() {
     }, [completedCrop]);
 
  */
-    const handleDownloadClick = (event) => {
-        event.preventDefault()
-        const canvasRef = previewCanvasRef.current
-        const imageData64 = canvasRef.toDataURL('image/png')
-        const myFilename = uuid() + "." + 'png';
-
-
-        const myNewCroppedFile = base64StringtoFile(imageData64, myFilename)
-        console.log(myNewCroppedFile)
-
-        var data = new FormData()
-        data.append('file', myNewCroppedFile)
-
-
-        fetch(`${process.env.REACT_APP_BASE_URL}upload/profileImage`, {
-            method: 'POST',
-            body: data
-        })
-            .then(res => res.json())
-            .then(
-                (result) => {
-
-
-                },
-                (error) => {
-
-                }
-            )
-
-    }
 
     function base64StringtoFile(base64String, filename) {
         var arr = base64String.split(','), mime = arr[0].match(/:(.*?);/)[1],
@@ -147,7 +162,7 @@ function CreateExplorePage() {
             openCropDialogHandler()
         }
         else {
-            console.log("DAWAFAWF")
+
         }
     };
 
@@ -157,7 +172,13 @@ function CreateExplorePage() {
     }
 
     const closeCropDialogHandler = () => {
+        if (!isChoosedImg) {
+            setCompletedCrop(null)
+        }
+
         setSelectedFile(null)
+        /*    if(!isChoosedImg)  tempImgUrl = "" */
+        setExplore({ ...explore, imageUrl: "" })
         setOpenCropDialog(false)
     }
 
@@ -169,17 +190,34 @@ function CreateExplorePage() {
 
     const handleOnCropChange = (crop) => {
         setPixelCrop(crop)
+    }
 
+    const onChangeTitle = (event) => {
+        setExplore({ ...explore, title: event.target.value })
+        setIsInvalidTitle(false)
+    }
 
+    const onChangeParagraph = (event) => {
+        setExplore({ ...explore, paragraph: event.target.value })
+        setIsInvalidParagraph(false)
+    }
+
+    const onChangeAuthor = (event) => {
+        setExplore({ ...explore, author: event.target.value })
+        setIsInvalidAuthor(false)
     }
 
     const confirmCropDialogHandler = () => {
         setOpenCropDialog(false)
+        tempImgUrl = "chosedImg"
+        console.log(tempImgUrl)
+        setIsChoosedImg(true)
+     
         console.log(completedCrop)
         if (!completedCrop || !previewCanvasRef.current || !imgRef.current) {
             return;
         }
-
+       
         const image = imgRef.current;
         const canvas = previewCanvasRef.current;
         const crop = completedCrop;
@@ -206,9 +244,110 @@ function CreateExplorePage() {
             crop.width * scaleX,
             crop.height * scaleY
         );
+
+        setIsInvalidImg(true)
         /*     const canvasRef = imagePreviewCanvasRef.current
             image64toCanvasRef(canvasRef, selectedFile, crop) */
     }
+
+    const upLoadImg = async () => {
+        /*    event.preventDefault() */
+        const canvasRef = previewCanvasRef.current
+        const imageData64 = canvasRef.toDataURL('image/png')
+        const myFilename = uuid() + "." + 'png';
+
+
+        const myNewCroppedFile = base64StringtoFile(imageData64, myFilename)
+
+
+        var data = new FormData()
+        data.append('file', myNewCroppedFile)
+
+        let uploadImageRes = await fetch(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_URL_PATH_UPLOAD}${process.env.REACT_APP_URL_PATH_UPLOAD_EXPLORE}`, {
+            method: 'POST',
+            body: data
+        });
+
+
+        uploadImageRes = await uploadImageRes.json()
+
+
+
+        tempImgUrl = uploadImageRes.resultData.path
+
+
+
+        /*  fetch(`${process.env.REACT_APP_BASE_URL}upload/profileImage`, {
+             method: 'POST',
+             body: data
+         })
+             .then(res => res.json())
+             .then(
+                 (result) => {
+ 
+ 
+                 },
+                 (error) => {
+ 
+                 }
+             ) */
+
+    }
+
+    const createExplore = async () => {
+        tempImgUrl = "chosedImg"
+        if (!validated()) {
+
+            return
+        }
+        await upLoadImg()
+        /*      setExplore({...explore , imageUrl : tempImgUrl}) */
+        /*    console.log(explore.title)
+           console.log(explore.paragraph)
+           console.log(explore.author)
+           console.log(tempImgUrl) */
+
+        let createExplore = await fetch(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_URL_PATH_EXPLORE}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                title: explore.title,
+                paragraph: explore.paragraph,
+                author: explore.author,
+                image_url: tempImgUrl
+            })
+        });
+
+        
+
+
+        const createExploreRes = await createExplore.json()
+        if (createExploreRes.resultCode === '20100') {
+            MySwal.fire({
+                icon : 'success',
+                title: <p>New Explore has been add !!!</p>,
+
+            }).then((result) => {
+                history.push("/explore/")
+            })
+        }
+
+
+    }
+
+    const validated = () => {
+        if (explore.title === "" || explore.paragraph === "" || explore.author === "" || completedCrop === null) {
+            if (explore.title === "") setIsInvalidTitle(true)
+            if (explore.paragraph === "") setIsInvalidParagraph(true)
+            if (explore.author === "") setIsInvalidAuthor(true)
+            if (completedCrop === null) setIsInvalidImg(true)
+            
+
+            return false
+        }
+        else return true
+    }
+
 
 
     const fileUploadHandler = (event) => {
@@ -286,14 +425,66 @@ function CreateExplorePage() {
                 <Grid item xs={4} md={8}>
                     <Card sx={{ minWidth: 275, marginLeft: 2, marginRight: 2, marginBottom: 2 }}>
                         <CardContent>
-                            <Typography variant="h5" component="div">
+                            <Typography variant="h5" component="div" >
                                 Add New Explore
+                            </Typography>
+                            <Divider sx={{ marginTop: 2, marginBottom: 2 }} />
+                            <Typography variant="h6" component="div" >
+                                Title
+                            </Typography>
+                            <Grid item xs={4} md={10}>
+                                <TextField
+                                    {...isInvalidTitle && { ...inputPropsErrorValidTitle }}
+                                    id="title"
+                                    label="Enter Title"
+                                    variant="standard"
+                                    fullWidth
+                                    value={explore.title}
+                                    onChange={(e) => { onChangeTitle(e) }} />
+                            </Grid>
+                            <Box sx={{ minHeight: 10 }}  ></Box>
+                            <Typography variant="h6" component="div" >
+                                Paragraph
+                            </Typography>
+
+                            <Grid item xs={4} md={10}>
+                                <TextField
+                                    {...isInvalidParagraph && { ...inputPropsErrorValidParagraph }}
+                                    placeholder="Enter Paragraph"
+                                    multiline
+                                    rows={2}
+                                    fullWidth
+                                    rowsMax={4}
+                                    value={explore.paragraph} onChange={(e) => { onChangeParagraph(e) }}
+                                    className={classes.root}
+                                />
+                            </Grid>
+
+                            <Box sx={{ minHeight: 10 }}></Box>
+                            <Typography variant="h6" component="div" >
+                                Author
+                            </Typography>
+                            <Grid item xs={4} md={10}>
+                                <TextField
+                                    {...isInvalidAuthor && { ...inputPropsErrorValidAuthor }}
+                                    id="author"
+                                    label="Enter Author"
+                                    variant="standard"
+                                    fullWidth
+                                    value={explore.author}
+                                    onChange={(e) => { onChangeAuthor(e) }} />
+                            </Grid>
+
+                            <Box sx={{ minHeight: 10 }}></Box>
+                            <Typography variant="h6" component="div" >
+                                Image
                             </Typography>
                             <Button
                                 variant="contained"
                                 component="label"
+                                size="small"
                             >
-                                Upload File
+                                Select File
                                 <input onChange={onSelectFile} onClick={(event) => {
                                     event.target.value = null
                                 }}
@@ -301,23 +492,22 @@ function CreateExplorePage() {
                                     hidden
                                 />
                             </Button>
-                            <Typography variant="body2">
-                                well meaning and kindly.
-                                <br />
-                                {'"a benevolent smile"'}
-                            </Typography>
+                            <Box sx={{ minHeight: 5 }}></Box>
+                            <div>  {completedCrop !== null ? <canvas
+                                ref={previewCanvasRef}
+                                // Rounding is important so the canvas width and height matches/is a multiple for sharpness.
+                                style={{
+                                    width: Math.round(completedCrop?.width ?? 0),
+                                    height: Math.round(completedCrop?.height ?? 0)
+                                }}
+                            /> : <div>  {isInvalidImg && <FormHelperText sx={{color : '#d32f2f'}}>Please Select Image</FormHelperText>}</div>}
+                            </div>
                         </CardContent>
+                        <Divider sx={{ marginTop: 2 }} />
                         <CardActions>
-                            <Button size="small" onClick={handleDownloadClick}>Learn More</Button>
+                            <Button size="small" variant="contained" onClick={createExplore}>Create Explore</Button>
                         </CardActions>
-                        <div>  {crop !== null ? <canvas
-                            ref={previewCanvasRef}
-                            // Rounding is important so the canvas width and height matches/is a multiple for sharpness.
-                            style={{
-                                width: Math.round(completedCrop?.width ?? 0),
-                                height: Math.round(completedCrop?.height ?? 0)
-                            }}
-                        /> : <div></div>}</div>
+
 
                     </Card>
                 </Grid>

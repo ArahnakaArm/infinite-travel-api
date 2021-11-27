@@ -224,7 +224,7 @@ export default function ExolerPage(props) {
                                             {item.exploreId}
                                         </TableCell>
                                         <TableCell component="th" scope="row">
-                                            {item.header}
+                                            {item.title}
                                         </TableCell>
 
                                         <TableCell component="th" scope="row">
@@ -246,7 +246,7 @@ export default function ExolerPage(props) {
                                                     <Button onClick={() => handleChangeButton(item.exploreId)} color="warning" variant="contained" startIcon={<CreateIcon />}>แก้ไข</Button>
                                                 </Grid>
                                                 <Grid item xs={12} md={4}>
-                                                    <Button onClick={() => handleDeleteButton(item.exploreId, item.header)} color="error" variant="contained" startIcon={<DeleteIcon />}>ลบ</Button>
+                                                    <Button onClick={() => handleDeleteButton(item.exploreId, item.title)} color="error" variant="contained" startIcon={<DeleteIcon />}>ลบ</Button>
                                                 </Grid>
 
                                             </Grid>
@@ -299,7 +299,7 @@ export default function ExolerPage(props) {
                 <Drawer />
                 <Snackbar open={open} autoHideDuration={6000} onClose={handleCloseSuccessAlert}>
                     <Alert onClose={handleCloseSuccessAlert} severity="success" sx={{ width: '100%' }}>
-                        สำเร็จ !!
+                        Success !!
                     </Alert>
                 </Snackbar>
                 <Dialog
@@ -309,17 +309,17 @@ export default function ExolerPage(props) {
                     aria-describedby="alert-dialog-description"
                 >
                     <DialogTitle id="alert-dialog-title">
-                        {"ยืนยันการลบ?"}
+                        {"Remove?"}
                     </DialogTitle>
                     <DialogContent>
                         <DialogContentText id="alert-dialog-description">
-                            {currentIdDelete} คุณต้องการที่จะลบ {currentTitleDelete} ใช่หรือไม่ ?
+                            {currentIdDelete} Are you sure to remove {currentTitleDelete} ?
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={handleCloseDeleteDialog}>ยกเลิก</Button>
+                        <Button onClick={handleCloseDeleteDialog}>Cancel</Button>
                         <Button onClick={confirmDeleteHandle} autoFocus>
-                            ลบ
+                            Remove
                         </Button>
                     </DialogActions>
                 </Dialog>
@@ -341,10 +341,10 @@ export default function ExolerPage(props) {
                         <Table>
                             <TableHead>
                                 <TableRow>
-                                    <TableCell width="10%">ลำดับ</TableCell>
-                                    <TableCell width="25%">ชื่อ Explore</TableCell>
-                                    <TableCell width="15%">ผู้เขียน</TableCell>
-                                    <TableCell width="15%">วัน-เวลา</TableCell>
+                                    <TableCell width="10%">No.</TableCell>
+                                    <TableCell width="25%">Explore Title</TableCell>
+                                    <TableCell width="15%">Author</TableCell>
+                                    <TableCell width="15%">Date</TableCell>
                                     <TableCell >Action</TableCell>
                                 </TableRow>
                             </TableHead>
@@ -358,7 +358,7 @@ export default function ExolerPage(props) {
                                             {i+1}
                                         </TableCell>
                                         <TableCell component="th" scope="row">
-                                            {item.header}
+                                            {item.title}
                                         </TableCell>
 
                                         <TableCell component="th" scope="row">
@@ -377,10 +377,10 @@ export default function ExolerPage(props) {
                                                     <Button onClick={() => handleCreateContentButton(item.exploreId)} color="info" variant="contained" startIcon={<AddCircleIcon />}>Content</Button>
                                                 </Grid>
                                                 <Grid item xs={12} md={3}>
-                                                    <Button onClick={() => handleChangeButton(item.exploreId)} color="warning" variant="contained" startIcon={<CreateIcon />}>แก้ไข</Button>
+                                                    <Button onClick={() => handleChangeButton(item.exploreId)} color="warning" variant="contained" startIcon={<CreateIcon />}>Edit</Button>
                                                 </Grid>
                                                 <Grid item xs={12} md={4}>
-                                                    <Button onClick={() => handleDeleteButton(item.exploreId, item.header)} color="error" variant="contained" startIcon={<DeleteIcon />}>ลบ</Button>
+                                                    <Button onClick={() => handleDeleteButton(item.exploreId, item.title)} color="error" variant="contained" startIcon={<DeleteIcon />}>Remove</Button>
                                                 </Grid>
 
                                             </Grid>
