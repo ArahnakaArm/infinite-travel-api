@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ExplorePage from "./pages/explorePage/explorePage";
 import CreateExplorePage from './pages/explorePage/createExplorePage'
+import ProfilePage from "./pages/profilePage";
 import LoginPage from "./pages/loginPage";
 import HelloComponent from "./components/HelloComponent";
 import { Route, Switch } from "react-router-dom";
@@ -45,6 +46,8 @@ export default function App() {
           <ProtectedRoute exact path="/"  component={HelloComponent}  />
           <ProtectedRoute exact path="/explore" component={ExplorePage} />
           <ProtectedRoute exact path="/explore/create" component={CreateExplorePage} />
+          <ProtectedRoute exact path="/profile/:id" component={ProfilePage} />
+          
      
         </Switch>
       </div>

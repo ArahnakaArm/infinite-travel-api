@@ -10,6 +10,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import InputAdornment from '@mui/material/InputAdornment';
 import LockIcon from '@mui/icons-material/Lock';
+import CallHttp  from '../services/callHttp';
 
 function LoginPage(props) {
     document.body.style.overflow = 'hidden';
@@ -88,7 +89,29 @@ function LoginPage(props) {
     };
 
     const goLogin = async () => {
-        const requestOptions = {
+
+            const respone = await CallHttp('POST',`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_URL_PATH_USER_LOGIN}`,
+            {
+                user_name: username,
+                password: password
+            })
+
+            if (!respone) {
+                console.log("NO RESP")
+                return
+            }
+
+
+            if (respone.resultCode === "20000") {
+                localStorage.setItem("token", respone.token)
+                auth.login(() => {
+                    history.push("/explore")
+                })
+            }
+
+          
+
+    /*     const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
@@ -122,7 +145,7 @@ function LoginPage(props) {
                 (error) => {
 
                 }
-            )
+            ) */
 
     }
 
@@ -163,14 +186,14 @@ function LoginPage(props) {
                     </Dialog>
                 </div>
                 <Grid container style={{ minHeight: '100vh' }}>
-                    <Grid item xs={12} sm={6}>
-                        <img src="https://scontent.fhdy2-1.fna.fbcdn.net/v/t39.30808-6/259976312_1795736280816490_9174967368936110458_n.jpg?_nc_cat=1&ccb=1-5&_nc_sid=730e14&_nc_eui2=AeHDbfhee8KbKAnZq5Lj5nSYnMKl_a6VCnacwqX9rpUKdrkWFfRdehSdAnmOtLDpu4ZijZK0DJjCo8H1aaq-408O&_nc_ohc=NEZnJXgCJ8cAX_ydMkg&_nc_ht=scontent.fhdy2-1.fna&oh=761d0b22cb1f154a41f06b16d117bc4d&oe=61A115B5" style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="brand" />
+                    <Grid item xs={12} sm={7}>
+                        <img src="https://i.lagmcdn.com/latestappgames/20211124/1463457556457459712.jpeg" style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="brand" />
                     </Grid>
-                    <Grid container item xs={12} sm={6} alignItems="center" direction="column" justifyContent="space-between" style={{ padding: 10 }}>
+                    <Grid container item xs={12} sm={5} alignItems="center" direction="column" justifyContent="space-between" style={{ padding: 10 }}>
                         <div />
                         <div style={{ display: "flex", flexDirection: "column", maxWidth: 400, minWidth: 300 }}>
                             <Grid container justifyContent="center">
-                                <img src="https://upload.wikimedia.org/wikipedia/en/thumb/5/5d/Genshin_Impact_logo.svg/2560px-Genshin_Impact_logo.svg.png" width={300} alt="logo" />
+                                <img src="https://upload.wikimedia.org/wikipedia/en/thumb/5/5d/Genshin_Impact_logo.svg/2560px-Genshin_Impact_logo.svg.png" width={350} alt="logo" />
                             </Grid>
                             <TextField  {...isInvalidUsername && { ...inputPropsErrorValidUsername }} label="Username" onChange={(e) => { onChangeUsername(e) }} size="small" margin="normal" value={username} InputProps={{
                                 startAdornment: (

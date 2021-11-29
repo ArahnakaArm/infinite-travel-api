@@ -24,6 +24,8 @@ import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import { makeStyles } from "@material-ui/core/styles";
 import FormHelperText from '@mui/material/FormHelperText';
+import CallHttp from "../../services/callHttp";
+import CallHttpMultipart from "../../services/callHttpMultipart";
 
 
 function CreateExplorePage(props) {
@@ -212,12 +214,12 @@ function CreateExplorePage(props) {
         tempImgUrl = "chosedImg"
         console.log(tempImgUrl)
         setIsChoosedImg(true)
-     
+
         console.log(completedCrop)
         if (!completedCrop || !previewCanvasRef.current || !imgRef.current) {
             return;
         }
-       
+
         const image = imgRef.current;
         const canvas = previewCanvasRef.current;
         const crop = completedCrop;
@@ -262,21 +264,22 @@ function CreateExplorePage(props) {
 
         var data = new FormData()
         data.append('file', myNewCroppedFile)
+        const token = localStorage.getItem("token")
 
-        let uploadImageRes = await fetch(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_URL_PATH_UPLOAD}${process.env.REACT_APP_URL_PATH_UPLOAD_EXPLORE}`, {
-            method: 'POST',
-            body: data
-        });
+        let uploadImageRes = await CallHttpMultipart('POST', `${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_URL_PATH_UPLOAD}${process.env.REACT_APP_URL_PATH_UPLOAD_EXPLORE}`,
+            data, token
+        )
 
+        if (!uploadImageRes) {
+            return null
+        }
 
-        uploadImageRes = await uploadImageRes.json()
+        /*   let uploadImageRes = await fetch(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_URL_PATH_UPLOAD}${process.env.REACT_APP_URL_PATH_UPLOAD_EXPLORE}`, {
+              method: 'POST',
+              body: data
+          }); */
 
-
-
-        tempImgUrl = uploadImageRes.resultData.path
-
-
-
+        return uploadImageRes.resultData.path
         /*  fetch(`${process.env.REACT_APP_BASE_URL}upload/profileImage`, {
              method: 'POST',
              body: data
@@ -291,7 +294,6 @@ function CreateExplorePage(props) {
  
                  }
              ) */
-
     }
 
     const createExplore = async () => {
@@ -300,31 +302,62 @@ function CreateExplorePage(props) {
 
             return
         }
-        await upLoadImg()
-        /*      setExplore({...explore , imageUrl : tempImgUrl}) */
-        /*    console.log(explore.title)
-           console.log(explore.paragraph)
-           console.log(explore.author)
-           console.log(tempImgUrl) */
+        const imgPath = await upLoadImg()
 
-        let createExplore = await fetch(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_URL_PATH_EXPLORE}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
+        if (!imgPath) {
+            MySwal.fire({
+                icon: 'error',
+                title: <p>Please try again</p>,
+
+            }).then((result) => {
+
+            })
+
+            return
+        }
+
+
+        const token = localStorage.getItem("token")
+
+        let createExploreRes = await CallHttp('POST', `${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_URL_PATH_EXPLORE}`,
+            {
                 title: explore.title,
                 paragraph: explore.paragraph,
                 author: explore.author,
-                image_url: tempImgUrl
+                image_url: imgPath
+            },
+            token
+        )
+
+        /*      let createExplore = await fetch(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_URL_PATH_EXPLORE}`, {
+                 method: 'POST',
+                 headers: { 'Content-Type': 'application/json' },
+                 body: JSON.stringify({
+                     title: explore.title,
+                     paragraph: explore.paragraph,
+                     author: explore.author,
+                     image_url: tempImgUrl
+                 })
+             });
+      */
+
+
+
+        /*  const createExploreRes = await createExplore.json() */
+
+        if (!createExploreRes) {
+            MySwal.fire({
+                icon: 'error',
+                title: <p>Please try again</p>,
+
+            }).then((result) => {
+
             })
-        });
+        }
 
-        
-
-
-        const createExploreRes = await createExplore.json()
         if (createExploreRes.resultCode === '20100') {
             MySwal.fire({
-                icon : 'success',
+                icon: 'success',
                 title: <p>New Explore has been add !!!</p>,
 
             }).then((result) => {
@@ -341,7 +374,7 @@ function CreateExplorePage(props) {
             if (explore.paragraph === "") setIsInvalidParagraph(true)
             if (explore.author === "") setIsInvalidAuthor(true)
             if (completedCrop === null) setIsInvalidImg(true)
-            
+
 
             return false
         }
@@ -500,7 +533,7 @@ function CreateExplorePage(props) {
                                     width: Math.round(completedCrop?.width ?? 0),
                                     height: Math.round(completedCrop?.height ?? 0)
                                 }}
-                            /> : <div>  {isInvalidImg && <FormHelperText sx={{color : '#d32f2f'}}>Please Select Image</FormHelperText>}</div>}
+                            /> : <div>  {isInvalidImg && <FormHelperText sx={{ color: '#d32f2f' }}>Please Select Image</FormHelperText>}</div>}
                             </div>
                         </CardContent>
                         <Divider sx={{ marginTop: 2 }} />
