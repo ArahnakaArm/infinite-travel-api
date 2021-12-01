@@ -79,6 +79,17 @@ function ResponsiveDrawer(props) {
     handleMobileMenuClose(); */
   };
 
+  const goProfile = () => {
+    setIsOpenMenu(false)
+
+
+    if(props.location.pathname !== '/profile'){
+      history.push("/profile");
+    }
+
+
+  };
+
   const { history } = props;
   const classes = useStyles();
   const itemsList = [
@@ -157,7 +168,7 @@ function ResponsiveDrawer(props) {
               /*   open={Boolean(anchorEl)} */
                 onClose={handleClose}
               >
-                <MenuItem onClick={handleClose}>Profile</MenuItem>
+                <MenuItem onClick={goProfile}>Profile</MenuItem>
                 <MenuItem onClick={handleMenuLogout}>Log out</MenuItem>
               </Menu>
             </div>}

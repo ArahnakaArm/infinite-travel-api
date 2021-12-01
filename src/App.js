@@ -46,7 +46,7 @@ export default function App() {
           <ProtectedRoute exact path="/"  component={HelloComponent}  />
           <ProtectedRoute exact path="/explore" component={ExplorePage} />
           <ProtectedRoute exact path="/explore/create" component={CreateExplorePage} />
-          <ProtectedRoute exact path="/profile/:id" component={ProfilePage} />
+          <ProtectedRoute exact path="/profile" component={ProfilePage} />
           
      
         </Switch>

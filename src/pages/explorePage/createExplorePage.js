@@ -26,7 +26,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import FormHelperText from '@mui/material/FormHelperText';
 import CallHttp from "../../services/callHttp";
 import CallHttpMultipart from "../../services/callHttpMultipart";
-
+import AddIcon from '@mui/icons-material/Add';
 
 function CreateExplorePage(props) {
     const { history } = props;
@@ -537,8 +537,11 @@ function CreateExplorePage(props) {
                             </div>
                         </CardContent>
                         <Divider sx={{ marginTop: 2 }} />
-                        <CardActions>
-                            <Button size="small" variant="contained" onClick={createExplore}>Create Explore</Button>
+                        <CardActions  disableSpacing sx={{
+                            display: "flex",
+                            justifyContent: "flex-end"
+                        }}>
+                            <Button startIcon={<AddIcon />} size="small" variant="contained" onClick={createExplore}>Create Explore</Button>
                         </CardActions>
 
 

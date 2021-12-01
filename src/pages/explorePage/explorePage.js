@@ -20,6 +20,11 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Snackbar from '@mui/material/Snackbar';
 import MuiAlert from '@mui/material/Alert';
 import Drawer from "../../components/Drawer";
+import IconButton from "@material-ui/core/IconButton";
+import InputAdornment from "@material-ui/core/InputAdornment";
+import SearchIcon from '@mui/icons-material/Search';
+import TextField from '@mui/material/TextField';
+
 
 const Alert = React.forwardRef(function Alert(props, ref) {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
@@ -325,17 +330,33 @@ export default function ExolerPage(props) {
                 </Dialog>
 
 
-                <Box mr={3} ml={3}  sx={{ justifyContent: 'center' }}>
-                <Grid container justifyContent="flex-end">
-                    <Grid >
-                        <Button  onClick={() =>{
-                            history.push("/explore/create")
-                        }}  color="info" variant="contained" startIcon={<AddCircleIcon />}>Explore</Button>
+                <Box mr={3} ml={3} sx={{ justifyContent: 'center' }}>
+                    <Grid container justifyContent="flex-end" spacing={2}>
+                        <Grid item>
+                            <TextField  sx={{ width : 200}}
+                                label="Search"
+                                size="small"
+                                InputProps={{
+                                    endAdornment: (
+                                        <InputAdornment position="end">
+                                            
+                                            <SearchIcon />
+                             
+                                        </InputAdornment>
+                                    ),
+                                }}
+                            />
+                        </Grid>
+                 
+                        <Grid item>
+                            <Button onClick={() => {
+                                history.push("/explore/create")
+                            }} color="info" variant="contained" startIcon={<AddCircleIcon />}>Explore</Button>
+                        </Grid>
                     </Grid>
-                </Grid>
                 </Box>
-             
-         
+
+
                 <Box mr={3} ml={3} mt={2} sx={{ justifyContent: 'center' }}>
                     <TableContainer component={Paper}>
                         <Table>
@@ -349,13 +370,13 @@ export default function ExolerPage(props) {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {items.map((item,i) => (
+                                {items.map((item, i) => (
                                     <TableRow
                                         key={item.exploreId}
                                         sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                                     >
                                         <TableCell component="th" scope="row">
-                                            {i+1}
+                                            {i + 1}
                                         </TableCell>
                                         <TableCell component="th" scope="row">
                                             {item.title}
