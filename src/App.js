@@ -1,14 +1,18 @@
 import React, { useEffect, useState } from "react";
-import ExplorePage from "./pages/explorePage/explorePage";
-import CreateExplorePage from './pages/explorePage/createExplorePage'
-import ProfilePage from "./pages/profilePage";
-import LoginPage from "./pages/loginPage";
-import HelloComponent from "./components/HelloComponent";
 import { Route, Switch } from "react-router-dom";
-import Drawer from "./components/Drawer";
 import { makeStyles } from "@material-ui/core/styles";
 import { ProtectedRoute } from "./services/protected.route";
-import auth from "./services/auth";
+
+
+
+///////// Explore 
+import ExplorePage from "./pages/explorePage/explorePage";
+import CreateExplorePage from './pages/explorePage/createExplorePage'
+///////// Proflie
+import ProfilePage from "./pages/profilePage/profilePage";
+import ChangePasswordPage from "./pages/profilePage/changePasswordPage";
+///////// Login
+import LoginPage from "./pages/loginPage";
 
 
 const useStyles = makeStyles({
@@ -43,10 +47,11 @@ export default function App() {
     
         <Switch>
           <Route exact from="/login" render={props => <LoginPage {...props} />} />
-          <ProtectedRoute exact path="/"  component={HelloComponent}  />
+          <ProtectedRoute exact path="/"  component={ExplorePage}  />
           <ProtectedRoute exact path="/explore" component={ExplorePage} />
           <ProtectedRoute exact path="/explore/create" component={CreateExplorePage} />
           <ProtectedRoute exact path="/profile" component={ProfilePage} />
+          <ProtectedRoute exact path="/change-password" component={ChangePasswordPage} />
           
      
         </Switch>

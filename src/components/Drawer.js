@@ -46,7 +46,7 @@ function ResponsiveDrawer(props) {
 
 
   useEffect(() => {
-    console.log("USE EFFF WORK !!!!!!!")
+
     setIsOpenMenu2(true)
   }, [])
 
@@ -81,13 +81,16 @@ function ResponsiveDrawer(props) {
 
   const goProfile = () => {
     setIsOpenMenu(false)
-
-
     if(props.location.pathname !== '/profile'){
       history.push("/profile");
     }
+  };
 
-
+  const goChangePassword = () => {
+    setIsOpenMenu(false)
+    if(props.location.pathname !== '/change-password'){
+      history.push("/change-password");
+    }
   };
 
   const { history } = props;
@@ -169,6 +172,7 @@ function ResponsiveDrawer(props) {
                 onClose={handleClose}
               >
                 <MenuItem onClick={goProfile}>Profile</MenuItem>
+                <MenuItem onClick={goChangePassword}>Change Password</MenuItem>
                 <MenuItem onClick={handleMenuLogout}>Log out</MenuItem>
               </Menu>
             </div>}

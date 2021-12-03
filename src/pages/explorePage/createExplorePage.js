@@ -12,13 +12,9 @@ import 'react-image-crop/dist/ReactCrop.css';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import CircularProgress from '@mui/material/CircularProgress';
-import { minWidth } from "@mui/system";
 import Divider from '@mui/material/Divider';
 import TextField from '@mui/material/TextField';
-import TextareaAutosize from '@mui/material/TextareaAutosize';
 import uuid from 'react-uuid'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
@@ -27,6 +23,7 @@ import FormHelperText from '@mui/material/FormHelperText';
 import CallHttp from "../../services/callHttp";
 import CallHttpMultipart from "../../services/callHttpMultipart";
 import AddIcon from '@mui/icons-material/Add';
+
 
 function CreateExplorePage(props) {
     const { history } = props;
@@ -85,40 +82,7 @@ function CreateExplorePage(props) {
     useEffect(() => {
     }, []);
 
-    /* useEffect(() => {
-        if (!completedCrop || !previewCanvasRef.current || !imgRef.current) {
-            return;
-        }
 
-        const image = imgRef.current;
-        const canvas = previewCanvasRef.current;
-        const crop = completedCrop;
-
-        const scaleX = image.naturalWidth / image.width;
-        const scaleY = image.naturalHeight / image.height;
-        const ctx = canvas.getContext('2d');
-        const pixelRatio = window.devicePixelRatio;
-
-        canvas.width = crop.width * pixelRatio * scaleX;
-        canvas.height = crop.height * pixelRatio * scaleY;
-
-        ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
-        ctx.imageSmoothingQuality = 'high';
-
-        ctx.drawImage(
-            image,
-            crop.x * scaleX,
-            crop.y * scaleY,
-            crop.width * scaleX,
-            crop.height * scaleY,
-            0,
-            0,
-            crop.width * scaleX,
-            crop.height * scaleY
-        );
-    }, [completedCrop]);
-
- */
 
     function base64StringtoFile(base64String, filename) {
         var arr = base64String.split(','), mime = arr[0].match(/:(.*?);/)[1],
@@ -136,24 +100,7 @@ function CreateExplorePage(props) {
 
     }
     window.addEventListener("resize", updateDimensions)
-    /*     const [crop, setCrop] = useState({ aspect: 16 / 9 }); */
-
-
-
-    /* const fileSelectedHandler = (event) =>{
-        console.log("----------------" + event.target.files[0])
-        const myFileItemReader = new FileReader()   
-        if(event.target.files[0]){
-            myFileItemReader.addEventListener("load", ()=>{
-                // console.log(myFileItemReader.result)
-                const myResult = myFileItemReader.result
-                setSelectedFile(myResult)
-            }, false)
-            myFileItemReader.readAsDataURL(event.target.files[0])
-            openCropDialogHandler()
-        }
-    
-    } */
+  
 
     const onSelectFile = (e) => {
         if (e.target.files && e.target.files.length > 0) {
@@ -185,8 +132,7 @@ function CreateExplorePage(props) {
     }
 
     const handleOnCropComplete = (crop, pixelCrop) => {
-        /*  setPixelCrop(pixelCrop)
-         console.log(pixelCrop) */
+  
 
     }
 
@@ -248,12 +194,11 @@ function CreateExplorePage(props) {
         );
 
         setIsInvalidImg(true)
-        /*     const canvasRef = imagePreviewCanvasRef.current
-            image64toCanvasRef(canvasRef, selectedFile, crop) */
+      
     }
 
     const upLoadImg = async () => {
-        /*    event.preventDefault() */
+
         const canvasRef = previewCanvasRef.current
         const imageData64 = canvasRef.toDataURL('image/png')
         const myFilename = uuid() + "." + 'png';
@@ -273,27 +218,7 @@ function CreateExplorePage(props) {
         if (!uploadImageRes) {
             return null
         }
-
-        /*   let uploadImageRes = await fetch(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_URL_PATH_UPLOAD}${process.env.REACT_APP_URL_PATH_UPLOAD_EXPLORE}`, {
-              method: 'POST',
-              body: data
-          }); */
-
         return uploadImageRes.resultData.path
-        /*  fetch(`${process.env.REACT_APP_BASE_URL}upload/profileImage`, {
-             method: 'POST',
-             body: data
-         })
-             .then(res => res.json())
-             .then(
-                 (result) => {
- 
- 
-                 },
-                 (error) => {
- 
-                 }
-             ) */
     }
 
     const createExplore = async () => {
@@ -328,22 +253,6 @@ function CreateExplorePage(props) {
             },
             token
         )
-
-        /*      let createExplore = await fetch(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_URL_PATH_EXPLORE}`, {
-                 method: 'POST',
-                 headers: { 'Content-Type': 'application/json' },
-                 body: JSON.stringify({
-                     title: explore.title,
-                     paragraph: explore.paragraph,
-                     author: explore.author,
-                     image_url: tempImgUrl
-                 })
-             });
-      */
-
-
-
-        /*  const createExploreRes = await createExplore.json() */
 
         if (!createExploreRes) {
             MySwal.fire({
@@ -384,8 +293,7 @@ function CreateExplorePage(props) {
 
 
     const fileUploadHandler = (event) => {
-        /*   setSelectedFile(event.target.files[0])
-          console.log(event.target.files[0]); */
+  
     }
 
     const confirmCropHandler = () => {
@@ -397,27 +305,6 @@ function CreateExplorePage(props) {
     }, []);
 
 
-    /*   function image64toCanvasRef(canvasRef, image64, pixelCrop) {
-          const canvas = canvasRef 
-          canvas.width = pixelCrop.width
-          canvas.height = pixelCrop.height
-          const ctx = canvas.getContext('2d')
-          const image = new Image()
-          image.src = image64
-          image.onload = function () {
-              ctx.drawImage(
-                  image,
-                  pixelCrop.x,
-                  pixelCrop.y,
-                  pixelCrop.width,
-                  pixelCrop.height,
-                  0,
-                  0,
-                  pixelCrop.width,
-                  pixelCrop.height
-              )
-          }
-      } */
 
 
     return (<>
