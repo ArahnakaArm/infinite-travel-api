@@ -73,18 +73,24 @@ function LoginPage(props) {
 
     const login = () => {
 
+        if (username === "" || password === ""){
+            if(username === "") setIsInvalidUsername(true)
+            if(password === "") setIsInvalidPassword(true)
+            return
+        }
+
         /*     localStorage.setItem("token", "asdasdas")
             auth.login(() => {
                 
                 history.push("/explore")
             }) */
         if (!isInvalidUsername && !isInvalidPassword && username !== "" && password !== "") {
-            console.log(username, password)
+    
             goLogin()
             /*    setUsername('')
                setPassword('') */
         }
-        else console.log("Invalid")
+   
 
     };
 

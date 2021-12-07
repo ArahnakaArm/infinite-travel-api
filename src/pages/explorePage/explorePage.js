@@ -103,7 +103,7 @@ export default function ExolerPage(props) {
         console.log(id);
     };
 
-    const handleChangeButton = (id) => {
+    const handleEditButton = (id) => {
         console.log(id);
     };
 
@@ -248,7 +248,7 @@ export default function ExolerPage(props) {
                                                     <Button onClick={() => handleCreateContentButton(item.exploreId)} color="info" variant="contained" startIcon={<AddCircleIcon />}>Content</Button>
                                                 </Grid>
                                                 <Grid item xs={12} md={3}>
-                                                    <Button onClick={() => handleChangeButton(item.exploreId)} color="warning" variant="contained" startIcon={<CreateIcon />}>แก้ไข</Button>
+                                                    <Button onClick={() => handleEditButton(item.exploreId)} color="warning" variant="contained" startIcon={<CreateIcon />}>แก้ไข</Button>
                                                 </Grid>
                                                 <Grid item xs={12} md={4}>
                                                     <Button onClick={() => handleDeleteButton(item.exploreId, item.title)} color="error" variant="contained" startIcon={<DeleteIcon />}>ลบ</Button>
@@ -398,7 +398,7 @@ export default function ExolerPage(props) {
                                                     <Button onClick={() => handleCreateContentButton(item.exploreId)} color="info" variant="contained" startIcon={<AddCircleIcon />}>Content</Button>
                                                 </Grid>
                                                 <Grid item xs={12} md={3}>
-                                                    <Button onClick={() => handleChangeButton(item.exploreId)} color="warning" variant="contained" startIcon={<CreateIcon />}>Edit</Button>
+                                                    <Button onClick={() => handleEditButton(item.exploreId)} color="warning" variant="contained" startIcon={<CreateIcon />}>Edit</Button>
                                                 </Grid>
                                                 <Grid item xs={12} md={4}>
                                                     <Button onClick={() => handleDeleteButton(item.exploreId, item.title)} color="error" variant="contained" startIcon={<DeleteIcon />}>Remove</Button>
