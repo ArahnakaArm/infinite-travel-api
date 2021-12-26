@@ -17,7 +17,7 @@ import AccountCircle from '@mui/icons-material/AccountCircle';
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import Typography from '@mui/material/Typography';
-
+import FlightIcon from '@mui/icons-material/Flight';
 
 
 
@@ -75,8 +75,6 @@ function ResponsiveDrawer(props) {
     setIsOpenMenu2(false)
     localStorage.setItem("token", "")
     history.push("/login");
-  /*   setAnchorEl(null);
-    handleMobileMenuClose(); */
   };
 
   const goProfile = () => {
@@ -100,6 +98,11 @@ function ResponsiveDrawer(props) {
       text: "Explore",
       icon: <ExploreIcon />,
       onClick: () => history.push("/explore")
+    },
+    {
+      text: "Flight",
+      icon: <FlightIcon />,
+      onClick: () => history.push("/flight")
     },
   ];
 

@@ -13,6 +13,10 @@ import ProfilePage from "./pages/profilePage/profilePage";
 import ChangePasswordPage from "./pages/profilePage/changePasswordPage";
 ///////// Login
 import LoginPage from "./pages/loginPage";
+///////// Flight
+import FlightPage from "./pages/flightPage/flightPage"
+import CreateFlightPage from "./pages/flightPage/createFlightPage";
+
 
 
 const useStyles = makeStyles({
@@ -52,7 +56,9 @@ export default function App() {
           <ProtectedRoute exact path="/explore/create" component={CreateExplorePage} />
           <ProtectedRoute exact path="/profile" component={ProfilePage} />
           <ProtectedRoute exact path="/change-password" component={ChangePasswordPage} />
-          
+          <ProtectedRoute exact path="/flight" component={FlightPage} />
+          <ProtectedRoute exact path="/flight/create" component={CreateFlightPage} />
+         
      
         </Switch>
       </div>
