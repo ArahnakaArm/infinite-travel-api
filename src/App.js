@@ -16,6 +16,12 @@ import LoginPage from "./pages/loginPage";
 ///////// Flight
 import FlightPage from "./pages/flightPage/flightPage"
 import CreateFlightPage from "./pages/flightPage/createFlightPage";
+///////// Plane
+import PlanePage from "./pages/planePage/planePage"
+import CreatePlanePage from "./pages/planePage/createPlanePage"
+///////// Ticket
+import TicketListPage from "./pages/ticketPage/ticketListPage";
+import TicketSearchPage from "./pages/ticketPage/ticketSearchPage";
 
 
 
@@ -58,7 +64,11 @@ export default function App() {
           <ProtectedRoute exact path="/change-password" component={ChangePasswordPage} />
           <ProtectedRoute exact path="/flight" component={FlightPage} />
           <ProtectedRoute exact path="/flight/create" component={CreateFlightPage} />
-         
+          <ProtectedRoute exact path="/plane" component={PlanePage} />
+          <ProtectedRoute exact path="/plane/create" component={CreatePlanePage} />
+          <ProtectedRoute exact path="/ticket/list" component={TicketListPage} />
+          <ProtectedRoute exact path="/ticket/search" component={TicketSearchPage} />
+          
      
         </Switch>
       </div>

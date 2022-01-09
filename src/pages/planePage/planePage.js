@@ -23,19 +23,21 @@ import IconButton from "@material-ui/core/IconButton";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@mui/icons-material/Search";
 import TextField from "@mui/material/TextField";
-import FlightTakeoffIcon from '@mui/icons-material/FlightTakeoff';
-import FlightLandIcon from '@mui/icons-material/FlightLand';
+import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
+import FlightLandIcon from "@mui/icons-material/FlightLand";
 import { height } from "@mui/system";
-import { ThemeProvider, createTheme } from '@mui/system';
+import { ThemeProvider, createTheme } from "@mui/system";
 import ConvertDate from "../../services/convertDate";
+import Typography from "@mui/material/Typography";
 import CircularProgress from "@mui/material/CircularProgress";
 
-
+const AvailableIcon = require("../../assets/icons/check.png").default;
+const UnavailableIcon = require("../../assets/icons/close.png").default;
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-export default function FlightPage(props) {
+export default function PlanePage(props) {
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [items, setItems] = useState([]);
@@ -47,20 +49,19 @@ export default function FlightPage(props) {
   const [open, setOpen] = React.useState(false);
   const [search, setSearch] = React.useState("");
   const { history } = props;
-
   const [width, setWindowWidth] = useState(window.innerWidth);
+
+  /*   const [width, setWindowWidth] = useState(1000); */
   const updateDimensions = () => {
     const width = window.innerWidth;
     setWindowWidth(width);
     console.log(width);
   };
 
-  
-
   window.addEventListener("resize", updateDimensions);
 
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_URL_PATH_FLIGHT}?offset=0&limit=6`)
+    fetch(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_URL_PATH_PLANE}?offset=0&limit=6`)
       .then((res) => res.json())
       .then(
         (result) => {
@@ -68,6 +69,7 @@ export default function FlightPage(props) {
           if (result.totalCount % 6 === 0) setTotalPage(result.totalCount / 6);
           else setTotalPage(Math.floor(result.totalCount / 6 + 1));
           setIsLoaded(true);
+    /*   setIsLoaded(false); */ 
         },
         (error) => {
           setIsLoaded(true);
@@ -76,8 +78,8 @@ export default function FlightPage(props) {
       );
   }, []);
 
-  const getAllExplore = (offset, limit, method = "common") => {
-    fetch(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_URL_PATH_FLIGHT}?offset=${offset}&limit=${limit}`)
+  const getAllPlane = (offset, limit, method = "common") => {
+    fetch(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_URL_PATH_PLANE}?offset=${offset}&limit=${limit}`)
       .then((res) => res.json())
       .then(
         (result) => {
@@ -85,6 +87,7 @@ export default function FlightPage(props) {
           if (result.totalCount % 6 === 0) setTotalPage(result.totalCount / 6);
           else setTotalPage(Math.floor(result.totalCount / 6 + 1));
           setIsLoaded(true);
+
           if (method === "delete") {
             setPage(1);
           }
@@ -98,7 +101,7 @@ export default function FlightPage(props) {
 
   const handleChangePage = (event, value) => {
     setPage(value);
-    getAllExplore(6 * (value - 1), 6);
+    getAllPlane(6 * (value - 1), 6);
 
     console.log(value);
   };
@@ -136,7 +139,7 @@ export default function FlightPage(props) {
       .then((res) => res.json())
       .then(
         (result) => {
-          getAllExplore(0, 6, "delete");
+          getAllPlane(0, 6, "delete");
           openSuccessAlert();
         },
         (error) => {}
@@ -170,25 +173,25 @@ export default function FlightPage(props) {
     /*     setIsInvalidTitle(false); */
   };
 
+  const searchPlane = async () => {
+    console.log("Search");
+    fetch(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_URL_PATH_PLANE}?offset=0&limit=6&search=${search}`)
+      .then((res) => res.json())
+      .then(
+        (result) => {
+          setItems(result.resultData);
+          if (result.totalCount % 6 === 0) setTotalPage(result.totalCount / 6);
+          else setTotalPage(Math.floor(result.totalCount / 6 + 1));
+          setIsLoaded(true);
 
-  const searchFlight = async() => {
-    console.log("Search")
-    fetch(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_URL_PATH_FLIGHT}?offset=0&limit=6&search=${search}`)
-    .then((res) => res.json())
-    .then(
-      (result) => {
-        setItems(result.resultData);
-        if (result.totalCount % 6 === 0) setTotalPage(result.totalCount / 6);
-        else setTotalPage(Math.floor(result.totalCount / 6 + 1));
-        setIsLoaded(true);
-        console.log(result.resultData)
-      },
-      (error) => {
-        setIsLoaded(true);
-        setError(error);
-      }
-    );
-  }
+          console.log(result.resultData);
+        },
+        (error) => {
+          setIsLoaded(true);
+          setError(error);
+        }
+      );
+  };
 
   if (error) {
     return (
@@ -319,11 +322,11 @@ export default function FlightPage(props) {
           <Grid container justifyContent="flex-end" spacing={2}>
             <Grid item>
               <TextField
-               onKeyPress={(event) => {
-                if (event.key === "Enter") {
-                  searchFlight();
-                }
-              }}
+                onKeyPress={(event) => {
+                  if (event.key === "Enter") {
+                    searchPlane();
+                  }
+                }}
                 onChange={onChangeSearch}
                 value={search}
                 sx={{ width: 200 }}
@@ -332,9 +335,12 @@ export default function FlightPage(props) {
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
-                      <SearchIcon onClick={searchFlight} sx={{
-                        cursor:"pointer"
-                      }} />
+                      <SearchIcon
+                        onClick={searchPlane}
+                        sx={{
+                          cursor: "pointer",
+                        }}
+                      />
                     </InputAdornment>
                   ),
                 }}
@@ -344,13 +350,13 @@ export default function FlightPage(props) {
             <Grid item>
               <Button
                 onClick={() => {
-                  history.push("/flight/create");
+                  history.push("/plane/create");
                 }}
                 color="info"
                 variant="contained"
                 startIcon={<AddCircleIcon />}
               >
-                Flight
+                Plane
               </Button>
             </Grid>
           </Grid>
@@ -361,64 +367,98 @@ export default function FlightPage(props) {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell width="15%">FlightName</TableCell>
-                  <TableCell width="10%">Airline</TableCell>
-                  <TableCell width="10%">Plane-Model</TableCell>
-                  <TableCell width="20%">Depart-Arrive Time</TableCell>
-                  <TableCell width="20%">Origin-Destination</TableCell>
-                  <TableCell>Action</TableCell>
+                  <TableCell width="10%">
+                    <Typography variant="h7" component="h3">
+                      Plane Name
+                    </Typography>
+                  </TableCell>
+                  <TableCell width="10%">
+                    <Typography variant="h7" component="h3">
+                      Plane Code
+                    </Typography>
+                  </TableCell>
+                  <TableCell width="10%">
+                    <Typography variant="h7" component="h3">
+                      Image
+                    </Typography>
+                  </TableCell>
+                  <TableCell width="10%">
+                    <Typography variant="h7" component="h3">
+                      Airline
+                    </Typography>
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      textAlign: "center",
+                    }}
+                    width="10%"
+                  >
+                    <Typography variant="h7" component="h3">
+                      Model
+                    </Typography>
+                  </TableCell>
+                  <TableCell
+                    sx={{
+                      textAlign: "center",
+                    }}
+                    width="10%"
+                  >
+                    <Typography variant="h7" component="h3">
+                      Status
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="h7" component="h3">
+                      Action
+                    </Typography>
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {items.map((item, i) => (
-                  <TableRow key={item.flight_id} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
+                  <TableRow key={item.plane_id} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
                     <TableCell component="th" scope="row">
-                      {item.flight_name}
+                      {item.plane_name}
                     </TableCell>
                     <TableCell component="th" scope="row">
-                      {item.airline.airline_name}
-                    </TableCell>
-
-                    <TableCell component="th" scope="row">
-                      {item.plane_serve.plane_name}
-                    </TableCell>
-
-                    <TableCell component="th" scope="row">  
-                      <div>
-                        <FlightTakeoffIcon sx={{
-                        width : 20,
-                        height :  18,
-                        marginRight : 1
-                      }}/> {ConvertDate(item.depart_time)}</div>
-                      <Box sx={{
-                        height : 10
-                      }}>
-
-                      </Box>
-                      <div><FlightLandIcon sx={{
-                        width : 24,
-                        height :  18,
-                        marginRight : 1
-                      }} />{ConvertDate(item.arrive_time)}</div>
+                      {item.plane_code}
                     </TableCell>
 
                     <TableCell component="th" scope="row">
-                    <div>
-                        <FlightTakeoffIcon sx={{
-                        width : 20,
-                        height :  18,
-                        marginRight : 1
-                      }}/> {item.origin_airport.airport_name}</div>
-                      <Box sx={{
-                        height : 10
-                      }}>
+                      <img src={item.img_url} style={{ width: 200, height: 100 }} alt="brand" />
+                    </TableCell>
 
-                      </Box>
-                      <div><FlightLandIcon sx={{
-                        width : 24,
-                        height :  18,
-                        marginRight : 1
-                      }} />{item.destination_airport.airport_name}</div>
+                    <TableCell component="th" scope="row">
+                      <img src={item.airline.img_url} style={{ width: 200, height: 100 }} alt="brand" />
+                    </TableCell>
+
+                    <TableCell
+                      sx={{
+                        textAlign: "center",
+                      }}
+                      component="th"
+                      scope="row"
+                    >
+                      {item.model}
+                    </TableCell>
+
+                    <TableCell
+                      sx={{
+                        textAlign: "center",
+                      }}
+                      component="th"
+                      scope="row"
+                    >
+                      <Box
+                        component="img"
+                        sx={{
+                          height: 20,
+                          width: 20,
+                        }}
+                        alt="status"
+                        src={item.status === "active" ? AvailableIcon : UnavailableIcon}
+                      />
+                      {/*       {item.status} */}
                     </TableCell>
 
                     <TableCell component="th" scope="row">

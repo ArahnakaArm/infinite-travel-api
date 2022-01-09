@@ -23,19 +23,13 @@ import IconButton from "@material-ui/core/IconButton";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import SearchIcon from "@mui/icons-material/Search";
 import TextField from "@mui/material/TextField";
-import FlightTakeoffIcon from '@mui/icons-material/FlightTakeoff';
-import FlightLandIcon from '@mui/icons-material/FlightLand';
-import { height } from "@mui/system";
-import { ThemeProvider, createTheme } from '@mui/system';
-import ConvertDate from "../../services/convertDate";
 import CircularProgress from "@mui/material/CircularProgress";
-
 
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
-export default function FlightPage(props) {
+export default function TicketListPage(props) {
   const [error, setError] = useState(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [items, setItems] = useState([]);
@@ -45,8 +39,8 @@ export default function FlightPage(props) {
   const [totalPage, setTotalPage] = React.useState(0);
   const [openDeleteDialog, setOpenDeleteDialog] = React.useState(false);
   const [open, setOpen] = React.useState(false);
-  const [search, setSearch] = React.useState("");
   const { history } = props;
+  const [search, setSearch] = React.useState("");
 
   const [width, setWindowWidth] = useState(window.innerWidth);
   const updateDimensions = () => {
@@ -55,12 +49,10 @@ export default function FlightPage(props) {
     console.log(width);
   };
 
-  
-
   window.addEventListener("resize", updateDimensions);
 
   useEffect(() => {
-    fetch(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_URL_PATH_FLIGHT}?offset=0&limit=6`)
+    fetch(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_URL_PATH_TICKET}?offset=0&limit=6`)
       .then((res) => res.json())
       .then(
         (result) => {
@@ -76,8 +68,8 @@ export default function FlightPage(props) {
       );
   }, []);
 
-  const getAllExplore = (offset, limit, method = "common") => {
-    fetch(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_URL_PATH_FLIGHT}?offset=${offset}&limit=${limit}`)
+  const getAllTicket = (offset, limit, method = "common") => {
+    fetch(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_URL_PATH_TICKET}?offset=${offset}&limit=${limit}`)
       .then((res) => res.json())
       .then(
         (result) => {
@@ -98,7 +90,7 @@ export default function FlightPage(props) {
 
   const handleChangePage = (event, value) => {
     setPage(value);
-    getAllExplore(6 * (value - 1), 6);
+    getAllTicket(6 * (value - 1), 6);
 
     console.log(value);
   };
@@ -132,11 +124,11 @@ export default function FlightPage(props) {
       headers: { "Content-Type": "application/json" },
     };
     console.log("CF Delete");
-    fetch(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_URL_PATH_EXPLORE}${currentIdDelete}`, requestOptions)
+    fetch(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_URL_PATH_TICKET}${currentIdDelete}`, requestOptions)
       .then((res) => res.json())
       .then(
         (result) => {
-          getAllExplore(0, 6, "delete");
+          getAllTicket(0, 6, "delete");
           openSuccessAlert();
         },
         (error) => {}
@@ -170,25 +162,24 @@ export default function FlightPage(props) {
     /*     setIsInvalidTitle(false); */
   };
 
-
-  const searchFlight = async() => {
-    console.log("Search")
-    fetch(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_URL_PATH_FLIGHT}?offset=0&limit=6&search=${search}`)
-    .then((res) => res.json())
-    .then(
-      (result) => {
-        setItems(result.resultData);
-        if (result.totalCount % 6 === 0) setTotalPage(result.totalCount / 6);
-        else setTotalPage(Math.floor(result.totalCount / 6 + 1));
-        setIsLoaded(true);
-        console.log(result.resultData)
-      },
-      (error) => {
-        setIsLoaded(true);
-        setError(error);
-      }
-    );
-  }
+  const searchTicket = async () => {
+    console.log("Search");
+    fetch(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_URL_PATH_EXPLORE}?offset=0&limit=6&search=${search}`)
+      .then((res) => res.json())
+      .then(
+        (result) => {
+          setItems(result.resultData);
+          if (result.totalCount % 6 === 0) setTotalPage(result.totalCount / 6);
+          else setTotalPage(Math.floor(result.totalCount / 6 + 1));
+          setIsLoaded(true);
+          console.log(result.resultData);
+        },
+        (error) => {
+          setIsLoaded(true);
+          setError(error);
+        }
+      );
+  };
 
   if (error) {
     return (
@@ -317,42 +308,9 @@ export default function FlightPage(props) {
 
         <Box mr={3} ml={3} sx={{ justifyContent: "center" }}>
           <Grid container justifyContent="flex-end" spacing={2}>
-            <Grid item>
-              <TextField
-               onKeyPress={(event) => {
-                if (event.key === "Enter") {
-                  searchFlight();
-                }
-              }}
-                onChange={onChangeSearch}
-                value={search}
-                sx={{ width: 200 }}
-                label="Search"
-                size="small"
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <SearchIcon onClick={searchFlight} sx={{
-                        cursor:"pointer"
-                      }} />
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </Grid>
+        
 
-            <Grid item>
-              <Button
-                onClick={() => {
-                  history.push("/flight/create");
-                }}
-                color="info"
-                variant="contained"
-                startIcon={<AddCircleIcon />}
-              >
-                Flight
-              </Button>
-            </Grid>
+       
           </Grid>
         </Box>
 
@@ -361,85 +319,41 @@ export default function FlightPage(props) {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell width="15%">FlightName</TableCell>
-                  <TableCell width="10%">Airline</TableCell>
-                  <TableCell width="10%">Plane-Model</TableCell>
-                  <TableCell width="20%">Depart-Arrive Time</TableCell>
-                  <TableCell width="20%">Origin-Destination</TableCell>
-                  <TableCell>Action</TableCell>
+                  <TableCell >Ticket Number</TableCell>
+                  <TableCell >Flight</TableCell>
+                  <TableCell >Plane</TableCell>
+                  <TableCell >Airline</TableCell>
+                  <TableCell >Status</TableCell>
+                  <TableCell >Origin</TableCell>
+                  <TableCell >Destination</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {items.map((item, i) => (
-                  <TableRow key={item.flight_id} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
+                  <TableRow key={item.exploreId} sx={{ "&:last-child td, &:last-child th": { border: 0 } }}>
                     <TableCell component="th" scope="row">
-                      {item.flight_name}
+                      {item.ticket_number}
                     </TableCell>
                     <TableCell component="th" scope="row">
-                      {item.airline.airline_name}
-                    </TableCell>
-
-                    <TableCell component="th" scope="row">
-                      {item.plane_serve.plane_name}
-                    </TableCell>
-
-                    <TableCell component="th" scope="row">  
-                      <div>
-                        <FlightTakeoffIcon sx={{
-                        width : 20,
-                        height :  18,
-                        marginRight : 1
-                      }}/> {ConvertDate(item.depart_time)}</div>
-                      <Box sx={{
-                        height : 10
-                      }}>
-
-                      </Box>
-                      <div><FlightLandIcon sx={{
-                        width : 24,
-                        height :  18,
-                        marginRight : 1
-                      }} />{ConvertDate(item.arrive_time)}</div>
+                      {item.flight.flight_name}
                     </TableCell>
 
                     <TableCell component="th" scope="row">
-                    <div>
-                        <FlightTakeoffIcon sx={{
-                        width : 20,
-                        height :  18,
-                        marginRight : 1
-                      }}/> {item.origin_airport.airport_name}</div>
-                      <Box sx={{
-                        height : 10
-                      }}>
-
-                      </Box>
-                      <div><FlightLandIcon sx={{
-                        width : 24,
-                        height :  18,
-                        marginRight : 1
-                      }} />{item.destination_airport.airport_name}</div>
+                      {item.flight.plane_serve.plane_code}
                     </TableCell>
 
                     <TableCell component="th" scope="row">
-                      <Grid container spacing={0}>
-                        <Grid item>
-                          <Button onClick={() => handleEditButton(item.exploreId)} color="warning" variant="contained" startIcon={<CreateIcon />}>
-                            Edit
-                          </Button>
-                        </Grid>
-                        <Grid item md={1}></Grid>
-                        <Grid item>
-                          <Button onClick={() => handleDeleteButton(item.exploreId, item.title)} color="error" variant="contained" startIcon={<DeleteIcon />}>
-                            Remove
-                          </Button>
-                        </Grid>
-                      </Grid>
-                      {/*        <Box display="flex" justifyContent="space-between">
-                                                <Button variant="contained" startIcon={<AddCircleIcon />}>เพิ่ม Content</Button>
-                                                <Button variant="contained" startIcon={<CreateIcon />}>แก้ไข</Button>
-                                                <Button variant="contained" startIcon={<DeleteIcon />}>ลบ</Button>
-                                            </Box> */}
+                    {item.flight.airline.airline_name}
+                    </TableCell>
+
+                    <TableCell component="th" scope="row">
+                    {item.status}
+                    </TableCell>
+                    <TableCell component="th" scope="row">
+                    {item.flight.origin_airport.airport_name}
+                    </TableCell>
+                    <TableCell component="th" scope="row">
+                    {item.flight.destination_airport.airport_name}
                     </TableCell>
                   </TableRow>
                 ))}
@@ -456,40 +370,4 @@ export default function FlightPage(props) {
       </div>
     );
   }
-
-  /*      return (
-             <div style={{marginTop: 70 , width : '100%' }}> 
-              <Box mr={3} ml={3} mt={3}  sx={{ justifyContent: 'center' }}>
-         
-         
-              </Box>
-           <Box mr={3} ml={3}  sx={{ justifyContent: 'center' }}>
-           <TableContainer component={Paper}>
-             <Table  aria-label="simple table">
-               <TableHead>
-                 <TableRow>
-                   <TableCell>Dessert (100g serving)</TableCell>
-                 </TableRow>
-               </TableHead>
-               <TableBody>
-                 {items.map((item) => (
-                   <TableRow
-                     key={item.header}
-                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                   >
-                
-                   </TableRow>
-                 ))}
-               </TableBody>
-             </Table>
-           </TableContainer>
-         
-           </Box>
-          
-         
-            
-         
-           </div>
-            
-           ); */
 }
